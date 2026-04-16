@@ -7,6 +7,7 @@ const profilSchema = new Schema({
   noWa: { type: String, default: "" },
   kodeUnik: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  isFirstLogin: { type: Boolean, default: true },
   totalAbsen: { type: Number, default: 0 },
   absenBulanIni: { type: Number, default: 0 },
   streak: { type: Number, default: 0 },

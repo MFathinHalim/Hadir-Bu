@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { profilModel } from "@/models/profil";
+import { kelasModel } from "@/models/kelas";
 import connectDB from "@/utils/mongoose";
 import * as XLSX from "xlsx";
 import { nanoid } from "nanoid";
@@ -23,14 +24,23 @@ class Profiles {
     const hasil = [];
 
     for (const row of rows) {
+      const isGuru = row["isGuru"] === "TRUE";
+
+      if (isGuru) {
+        await kelasModel.findOneAndUpdate(
+          { nama: row["Kelas"] },
+          { nama: row["Kelas"], noWaWaliKelas: row["No WA"] },
+          { upsert: true },
+        );
+      }
+
       const kodeUnik = nanoid(8).toUpperCase();
       const password = await bcrypt.hash(kodeUnik, 10);
 
       await profilModel.create({
         nama: row["Nama"],
         kelas: row["Kelas"],
-        isGuru: row["isGuru"] === "TRUE",
-        noWa: row["No WA"] || "",
+        isGuru,
         kodeUnik,
         password,
       });
@@ -40,7 +50,16 @@ class Profiles {
 
     return hasil;
   }
+  async gantiPassword(kodeUnik: string, passwordBaru: string) {
+    const profil = await profilModel.findOne({ kodeUnik });
+    if (!profil) return null;
 
+    profil.password = await bcrypt.hash(passwordBaru, 10);
+    profil.isFirstLogin = false;
+    await profil.save();
+
+    return profil;
+  }
   async login(kodeUnik: string, password: string) {
     try {
       const profil = await profilModel.findOne({ kodeUnik });
