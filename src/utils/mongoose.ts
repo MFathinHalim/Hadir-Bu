@@ -22,6 +22,7 @@ const connectDB = async () => {
     cached.promise = mongoose
       .connect(process.env.MONGODBURI as string, opts)
       .then((mongoose) => {
+        console.log("success");
         return mongoose;
       });
   }

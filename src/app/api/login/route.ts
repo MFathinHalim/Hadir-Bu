@@ -1,3 +1,4 @@
+// /api/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import Profiles from "@/controllers/profil";
 
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+
     const profil = await profiles.login(kodeUnik, password);
 
     if (!profil) {
@@ -22,6 +24,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const isFirstLogin = password.toUpperCase() === kodeUnik.toUpperCase();
+
     const { newToken, refreshToken } = await profiles.createAccessToken(
       profil._id.toString(),
     );
@@ -29,6 +33,8 @@ export async function POST(req: NextRequest) {
     const res = NextResponse.json({
       message: "Login berhasil",
       isGuru: profil.isGuru,
+      isFirstLogin,
+      kodeUnik,
     });
 
     res.cookies.set("token", newToken, {

@@ -10,6 +10,11 @@ await connectDB();
 
 class Profiles {
   static instance: Profiles;
+  profil: any;
+
+  constructor() {
+    this.profil = profilModel;
+  }
 
   static getInstance() {
     if (!Profiles.instance) Profiles.instance = new Profiles();
@@ -37,7 +42,7 @@ class Profiles {
       const kodeUnik = nanoid(8).toUpperCase();
       const password = await bcrypt.hash(kodeUnik, 10);
 
-      await profilModel.create({
+      await this.profil.create({
         nama: row["Nama"],
         kelas: row["Kelas"],
         isGuru,
@@ -51,7 +56,8 @@ class Profiles {
     return hasil;
   }
   async gantiPassword(kodeUnik: string, passwordBaru: string) {
-    const profil = await profilModel.findOne({ kodeUnik });
+    const profil = await this.profil.findOne({ kodeUnik: kodeUnik }).exec();
+    console.log(profil);
     if (!profil) return null;
 
     profil.password = await bcrypt.hash(passwordBaru, 10);
@@ -62,7 +68,7 @@ class Profiles {
   }
   async login(kodeUnik: string, password: string) {
     try {
-      const profil = await profilModel.findOne({ kodeUnik });
+      const profil = await this.profil.findOne({ kodeUnik });
       if (!profil) return null;
 
       const isValid = await bcrypt.compare(password, profil.password);
@@ -77,7 +83,7 @@ class Profiles {
 
   async createAccessToken(id: string) {
     try {
-      const profil = await profilModel.findById(id);
+      const profil = await this.profil.findById(id);
       if (!profil) return { newToken: "", refreshToken: "" };
 
       const payload = {
