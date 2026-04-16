@@ -56,7 +56,18 @@ class Profiles {
     return hasil;
   }
   async gantiPassword(kodeUnik: string, passwordBaru: string) {
-    const profil = await this.profil.findOne({ kodeUnik: kodeUnik }).exec();
+    const allProfiles = await profilModel
+      .find({})
+      .select("kodeUnik nama isGuru isFirstLogin");
+    console.log(allProfiles);
+    const profil = await this.profil
+      .findOne({
+        kodeUnik: {
+          $regex: new RegExp(`^${kodeUnik.trim()}$`, "i"),
+        },
+      })
+      .exec();
+    console.log(kodeUnik);
     console.log(profil);
     if (!profil) return null;
 
