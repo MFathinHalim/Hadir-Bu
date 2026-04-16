@@ -15,11 +15,7 @@ class Profiles {
     return Profiles.instance;
   }
 
-  async createFromExcel(
-    fileBuffer: Buffer,
-    sekolahId: string,
-    kelasMap: Record<string, string>,
-  ) {
+  async createFromExcel(fileBuffer: Buffer) {
     const workbook = XLSX.read(fileBuffer);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(sheet) as any[];
@@ -31,9 +27,8 @@ class Profiles {
       const password = await bcrypt.hash(kodeUnik, 10);
 
       await profilModel.create({
-        sekolahId,
-        kelasId: kelasMap[row["Kelas"]],
         nama: row["Nama"],
+        kelas: row["Kelas"],
         isGuru: row["isGuru"] === "TRUE",
         noWa: row["No WA"] || "",
         kodeUnik,
@@ -45,6 +40,7 @@ class Profiles {
 
     return hasil;
   }
+
   async login(kodeUnik: string, password: string) {
     try {
       const profil = await profilModel.findOne({ kodeUnik });
@@ -68,9 +64,8 @@ class Profiles {
       const payload = {
         id: profil._id,
         nama: profil.nama,
+        kelas: profil.kelas,
         isGuru: profil.isGuru,
-        sekolahId: profil.sekolahId,
-        kelasId: profil.kelasId,
       };
 
       const newToken = jwt.sign(payload, process.env.JWT_SECRET_KEY || "", {

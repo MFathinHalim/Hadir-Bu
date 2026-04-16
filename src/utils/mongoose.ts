@@ -1,4 +1,4 @@
-import mongoose from mongoose;
+import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -6,7 +6,7 @@ mongoose.set("strict", false);
 
 let cached = global.mongoose;
 if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
 const connectDB = async () => {
@@ -14,14 +14,16 @@ const connectDB = async () => {
     return cached.conn;
   }
 
-  if(!cached.promise) {
+  if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-    }
+    };
 
-    cached.promise = mongoose.connect(process.env.MONGODBURI as string, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(process.env.MONGODBURI as string, opts)
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
 
   try {
