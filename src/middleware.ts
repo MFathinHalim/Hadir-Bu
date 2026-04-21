@@ -6,8 +6,8 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (!token) {
-    if (pathname === "/login") return NextResponse.next();
-    return NextResponse.redirect(new URL("/login", "req.url"));
+    if (pathname === "/user/login") return NextResponse.next();
+    return NextResponse.redirect(new URL("/user/login", req.url));
   }
 
   try {
@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/user/login", req.url));
   }
 }
 
