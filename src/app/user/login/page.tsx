@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [kodeUnik, setKodeUnik] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +24,9 @@ export default function LoginForm() {
 
     if (response.ok) {
       const data = await response.json();
-      if (data.token) {
-        setToken(data.token);
-        sessionStorage.setItem("token", data.token);
+      if (data.isFirstLogin) {
+        window.location.href = "/ganti-password";
+      } else {
         window.location.href = "/home";
       }
     } else {
@@ -40,9 +40,22 @@ export default function LoginForm() {
 
   return (
     <>
-      <input name="kodeUnik" placeholder="kodeUnik" />
-      <input type="password" placeholder="password" name="password" />
-      <button type="submit">Submit</button>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          name="kodeUnik"
+          placeholder="kodeUnik"
+          value={kodeUnik}
+          onChange={(e) => setKodeUnik(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Submit</button>
+      </form>
     </>
   );
 }
