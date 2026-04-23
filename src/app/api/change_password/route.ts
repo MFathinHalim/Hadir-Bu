@@ -7,18 +7,17 @@ const profiles = Profiles.getInstance();
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { kodeUnik, passwordBaru } = body; // <- passwordBaru !!!!
+    const { kodeUnik, password } = body; // <- passwordBaru !!!!
 
     console.log("Request body:", body);
 
-    if (!kodeUnik || !passwordBaru) {
+    if (!kodeUnik || !password) {
       return NextResponse.json(
         { message: "kodeUnik dan passwordBaru wajib diisi" },
         { status: 400 },
       );
     }
-
-    const profil = await profiles.gantiPassword(kodeUnik, passwordBaru);
+    const profil = await profiles.gantiPassword(kodeUnik, password);
     if (!profil) {
       return NextResponse.json(
         { message: "kode unik salah / Tidak ditemukan" },
@@ -30,7 +29,7 @@ export async function POST(req: NextRequest) {
       message: "Pergantian Password Berhasil",
       data: { kodeUnik },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Parse error:", error.message);
     return NextResponse.json(
       { message: "Invalid JSON", error: error.message },

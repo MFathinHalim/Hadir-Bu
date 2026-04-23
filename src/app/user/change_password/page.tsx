@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function LoginForm() {
   const [kodeUnik, setKodeUnik] = useState("");
@@ -7,10 +8,12 @@ export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/change_password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kodeUnik, password }),
@@ -18,12 +21,7 @@ export default function LoginForm() {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      if (data.isFirstLogin) {
-        window.location.href = "/user/change_password";
-      } else {
-        window.location.href = "/home";
-      }
+      window.location.href = "/home";
     } else {
       setErrorMessage(
         response.status === 401

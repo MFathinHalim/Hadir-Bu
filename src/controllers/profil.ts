@@ -59,7 +59,6 @@ class Profiles {
     const allProfiles = await profilModel
       .find({})
       .select("kodeUnik nama isGuru isFirstLogin");
-    console.log(allProfiles);
     const profil = await this.profil
       .findOne({
         kodeUnik: {
@@ -67,8 +66,6 @@ class Profiles {
         },
       })
       .exec();
-    console.log(kodeUnik);
-    console.log(profil);
     if (!profil) return null;
 
     profil.password = await bcrypt.hash(passwordBaru, 10);

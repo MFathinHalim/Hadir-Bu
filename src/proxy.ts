@@ -14,8 +14,8 @@ export async function proxy(req: NextRequest) {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY || "");
     const { payload } = await jwtVerify(token, secret);
 
-    if (payload.isFirstLogin && pathname !== "/change_password") {
-      return NextResponse.redirect(new URL("change_password", req.url));
+    if (payload.isFirstLogin && pathname !== "/user/change_password") {
+      return NextResponse.redirect(new URL("/user/change_password", req.url));
     }
 
     return NextResponse.next();
